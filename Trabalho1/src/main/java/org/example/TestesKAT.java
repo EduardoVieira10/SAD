@@ -5,7 +5,7 @@ import java.lang.reflect.Array;
 
 import java.util.HashMap;
 
-public class Teste {
+public class TestesKAT {
 
     private final String salt = "ABCDEFGHIJKLM";
     private final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
