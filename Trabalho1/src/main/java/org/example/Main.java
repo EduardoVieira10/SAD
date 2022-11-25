@@ -1,39 +1,75 @@
 package org.example;
 
-import java.io.IOException;
+import java.io.*;
+
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
+    static Scanner read = new Scanner(System.in);
     public static void main(String[] args) throws IOException {
 
-        /*System.out.println("Hello! Welcome to the apllication it while break your hash... or even break your mind...*//*");
+        int option = -1;
+        boolean validate = false;
+        Matcher matches = null;
 
-        int option = 0;
-        try{
-            while(option != 1 || option != 2 || option != 3){
+        System.out.println("Hello! Welcome to the apllication it while break your hash... or even break your mind...");
 
-                System.out.println("1 - Give me the hash");
-                System.out.println("2 - Path of wordlist file");
-                System.out.println("3 - Plugboard");            
-            }
+        do {
+            System.out.println("----------MENU---------");
+            System.out.println("1 - Give me the hash");
+            System.out.println("2 - Path of wordlist file");
+            System.out.println("3 - Plugboard");
+            System.out.println("Introduza a opção pretendida: ");
 
-        } catch (NumberFormatException e){
-            System.out.println("Introduza apenas algarimos!");
-        }
+            option = read.nextInt();
 
-        switch (option){
-            case 1:
+                switch(option){
+                    case 1:
+                        do {
+                            System.out.print("Insert the hash: ");
+                            String hash = read.next();
+                            if (hash.length() == 128) {
+                                BreakingEnigma.methodForReadHash(hash);
+                                validate = true;
+                            } else {
+                                System.out.println("Insira um hash com 128 caracteres.\n");
+                                break;
+                            }
+                        } while (validate == false);
+                        break;
 
-        }*/
+                    case 2:
+                        FileSystem fs = FileSystems.getDefault();
+                        do{
+                            FileReader fileReader;
+                            System.out.print("Insert the path for the wordlist file: ");
+                            String path = read.next();
+                            File file = new File(path);
+                            System.out.println(path);
 
-        BreakingEnigma breakingEnigma = new BreakingEnigma();
+                            System.out.print("Insert the hash: ");
+                            String hash = read.next();
 
-        String password = breakingEnigma.methodForReadPath("18aa4e563f44d86ad2019e17817af8d1d34f02263ec13d9c2536b6a2542d576e80bae1f4391acefa1ebca64365c05623537c5312f42c164b2bfa9af65e64cf2e");
-        System.out.println(password);
+                            if(file.exists() && hash.length() == 128){
+                                fileReader = new FileReader(file);
+                                //String pathInString = String.valueOf(fileReader);
+                                BreakingEnigma.methodForReadPath(hash,path);
+                                validate = true;
+                            }
+                        } while (validate == false);
+                        break;
 
-
-       /* TestesKAT teste = new TestesKAT();
-        teste.teste();*/
+                    case 3:
+                        validate = true;
+                        break;
+                }
+        } while(validate == false);
 
     }
 }
