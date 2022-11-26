@@ -2,74 +2,66 @@ package org.example;
 
 import java.io.*;
 
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class Main {
 
-    static Scanner read = new Scanner(System.in);
     public static void main(String[] args) throws IOException {
 
-        int option = -1;
-        boolean validate = false;
-        Matcher matches = null;
+        boolean validateHash = false;
+        boolean validatePlugboard = false;
+        boolean validatePath = false;
 
-        System.out.println("Hello! Welcome to the apllication it while break your hash... or even break your mind...");
+        String hash = null;
+        String plugboard = null;
+        String path = null;
+
+        System.out.println("Hello! Welcome to the application it will break your hash and find your password... or even break your mind...\n");
 
         do {
-            System.out.println("----------MENU---------");
-            System.out.println("1 - Give me the hash");
-            System.out.println("2 - Path of wordlist file");
-            System.out.println("3 - Plugboard");
-            System.out.println("Introduza a opção pretendida: ");
-
-            option = read.nextInt();
-
-                switch(option){
-                    case 1:
-                        do {
-                            System.out.print("Insert the hash: ");
-                            String hash = read.next();
-                            if (hash.length() == 128) {
-                                BreakingEnigma.methodForReadHash(hash);
-                                validate = true;
-                            } else {
-                                System.out.println("Insira um hash com 128 caracteres.\n");
-                                break;
-                            }
-                        } while (validate == false);
-                        break;
-
-                    case 2:
-                        FileSystem fs = FileSystems.getDefault();
-                        do{
-                            FileReader fileReader;
-                            System.out.print("Insert the path for the wordlist file: ");
-                            String path = read.next();
-                            File file = new File(path);
-                            System.out.println(path);
-
-                            System.out.print("Insert the hash: ");
-                            String hash = read.next();
-
-                            if(file.exists() && hash.length() == 128){
-                                fileReader = new FileReader(file);
-                                //String pathInString = String.valueOf(fileReader);
-                                BreakingEnigma.methodForReadPath(hash,path);
-                                validate = true;
-                            }
-                        } while (validate == false);
-                        break;
-
-                    case 3:
-                        validate = true;
-                        break;
+            System.out.println("Insert the hash: ");
+            hash = args[0];
+            //hash = "18aa4e563f44d86ad2019e17817af8d1d34f02263ec13d9c2536b6a2542d576e80bae1f4391acefa1ebca64365c05623537c5312f42c164b2bfa9af65e64cf2e";
+            if (hash.length() == 128) {
+                if (hash.matches("[a-z0-9]+")) {
+                    validateHash = true;
+                } else {
+                    System.out.println("need to insert a hash with only letters and numbers.");
                 }
-        } while(validate == false);
+            } else {
+                System.out.println("hash must contain 128 characters.");
+            }
+        } while (validateHash == false);
+
+
+        String newPlugboard = null;
+        do {
+            System.out.println("Insert the plugboard: ");
+            plugboard = args[1];
+            //plugboard = "{'T': 'D','A': 'J','I': 'Q','U': 'C','O': 'X','N': 'P','Y': 'B','E': 'H','G': 'K','L': 'S'}";
+            if(plugboard.matches("[{'A-Z': 'A-Z',}]+")){
+                newPlugboard = plugboard.replaceAll("[^A-Z]", "");
+                validatePlugboard = true;
+            } else {
+                System.out.println("plugboard should be insert like this: {'A': 'B','Z': 'X'}");
+            }
+        } while (validatePlugboard == false);
+
+
+        do {
+            System.out.println("Insert the path for a wordlist: ");
+            path = args[2];
+            //path = "/Users/utilizador/Downloads/wordlist2.txt";
+            File file = new File(path);
+            if (file.exists()) {
+                validatePath = true;
+            } else {
+                System.out.println("File not found.");
+            }
+        } while (validatePath == false);
+
+        if(validateHash == true && validatePlugboard == true && validatePath == true){
+            BreakingEnigma.enhancedCeaser(hash,newPlugboard,path);
+        }
 
     }
+
 }
