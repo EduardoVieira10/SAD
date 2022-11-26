@@ -11,7 +11,16 @@ import java.util.Scanner;
 
 public class BreakingEnigma {
 
-    public static void main(String[] args) throws IOException {
+    private static String salt = "ABCDEFGHIJKLM";
+    private static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static HashMap<Character, Character> hashMap;
+
+    /**
+     * Métodos que vai receber 3 parâmetros e valida-los
+     * @param args
+     * @throws IOException
+     */
+    public static void main(String[] args) throws IOException{
 
         boolean validateHash = false;
         boolean validatePlugboard = false;
@@ -21,14 +30,12 @@ public class BreakingEnigma {
         String plugboard = null;
         String path = null;
 
-        System.out.println("Hello! Welcome to the application it will break your hash and find your password... or even break your mind...\n");
+        System.out.println("\nHello! Welcome to the application it will break your hash and find your password... or even break your mind...\n");
 
-        do {
-            System.out.println("Insert the hash: ");
             hash = args[0];
-            //hash = "18aa4e563f44d86ad2019e17817af8d1d34f02263ec13d9c2536b6a2542d576e80bae1f4391acefa1ebca64365c05623537c5312f42c164b2bfa9af65e64cf2e";
+
             if (hash.length() == 128) {
-                if (hash.matches("[a-z0-9]+")) {
+                if (hash.matches("[a-f0-9]+$")) {
                     validateHash = true;
                 } else {
                     System.out.println("need to insert a hash with only letters and numbers.");
@@ -36,45 +43,41 @@ public class BreakingEnigma {
             } else {
                 System.out.println("hash must contain 128 characters.");
             }
-        } while (validateHash == false);
 
 
-        String newPlugboard = null;
-        do {
-            System.out.println("Insert the plugboard: ");
+            String newPlugboard = null;
+
             plugboard = args[1];
-            //plugboard = "{'T': 'D','A': 'J','I': 'Q','U': 'C','O': 'X','N': 'P','Y': 'B','E': 'H','G': 'K','L': 'S'}";
             if(plugboard.matches("[{'A-Z': 'A-Z',}]+")){
                 newPlugboard = plugboard.replaceAll("[^A-Z]", "");
                 validatePlugboard = true;
             } else {
-                System.out.println("plugboard should be insert like this: {'A': 'B','Z': 'X'}");
+                System.out.println("plugboard should be insert like this: {'A': 'B','Z': 'X'}.");
             }
-        } while (validatePlugboard == false);
 
-
-        do {
-            System.out.println("Insert the path for a wordlist: ");
             path = args[2];
-            //path = "/Users/utilizador/Downloads/wordlist2.txt";
             File file = new File(path);
             if (file.exists()) {
                 validatePath = true;
             } else {
                 System.out.println("File not found.");
             }
-        } while (validatePath == false);
 
-        if(validateHash == true && validatePlugboard == true && validatePath == true){
-            enhancedCeaser(hash,newPlugboard,path);
+            if(validateHash == true && validatePlugboard == true && validatePath == true){
+                enhancedCeaser(hash,newPlugboard,path);
+            }
         }
 
-    }
-    private static String salt = "ABCDEFGHIJKLM";
-    private static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static HashMap<Character, Character> hashMap;
 
-    public static String enhancedCeaser(String givenHash, String plugboard, String path) throws FileNotFoundException{
+    /**
+     * Método que implementa a Cifra de Cesar melhorada
+     * @param givenHash
+     * @param plugboard
+     * @param path
+     * @return password
+     * @throws FileNotFoundException
+     */
+    private static String enhancedCeaser(String givenHash, String plugboard, String path) throws FileNotFoundException{
         ArrayList<String> words = new ArrayList<>();
 
         hashMap = new HashMap<>();
@@ -151,7 +154,11 @@ public class BreakingEnigma {
         return null;
     }
 
-    /////////METODO DA PLUGBOARD///////////////
+    /**
+     * Método para trocar de caracteres na plugboard
+     * @param word
+     * @return string switched
+     */
     private static String plugboard(String word){
         char[] charArray = word.toCharArray();
 
@@ -168,7 +175,11 @@ public class BreakingEnigma {
         return string;
     }
 
-    /////////METODO SALT////////////////
+    /**
+     * Método para retornar todas as combinações de uma palavra com o salt
+     * @param word
+     * @return lista com todas as combinações possíveis
+     */
     private static ArrayList<String> putSalt(String word){
         String combinationFront;
         String combinationBack;
@@ -183,6 +194,7 @@ public class BreakingEnigma {
 
                 wordWithSalt.add(combinationFront);
 
+                //VERIFICA SE AS DUAS PALAVRAS FORMADAS SÃO IGUAIS
                 if(!combinationFront.equals(combinationBack)){
                     wordWithSalt.add(combinationBack);
                 }
